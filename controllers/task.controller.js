@@ -45,7 +45,7 @@ const deleteSingleTask = asyncHandler(async (req, res) => {
     const task = await Task.findByIdAndDelete(id);
 
     if (!task) {
-        return res.status(404).json({ message: 'This task does not exist.' });
+        return res.status(404).json(`No task with id: ${id}`);
     }
 
     res.status(200).json({ message: "Task Deleted" });
@@ -54,4 +54,20 @@ const deleteSingleTask = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { create, getAll, getSingleTask, deleteSingleTask };
+/********** Update A Task ***********/
+const updateTask = asyncHandler(async(req, res) => {
+    try {
+        const { id } = req.params;
+        const task = await Task.findByIdAndUpdate({ _id: id }, req.body, { new: true, runValidators: true });
+
+        if (!task) {
+            return res.status(404).json(`No task with id: ${id}`);
+        }
+
+        res.status(200).json(task);
+    } catch(error) {
+        res.status(500).json({ message: error.message });
+    };
+});
+
+module.exports = { create, getAll, getSingleTask, deleteSingleTask, updateTask };
